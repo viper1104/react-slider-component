@@ -168,7 +168,9 @@
        *  Callback called when the the slider is clicked (handle or bars).
        *  Receives the value at the clicked position as argument.
        */
-      onSliderClick: PropTypes.func
+      onSliderClick: PropTypes.func,
+	    
+	  resizeSlider: PropTypes.bool,
     },
 
     getDefaultProps: function () {
@@ -187,7 +189,8 @@
         pearling: false,
         disabled: false,
         snapDragDisabled: false,
-        invert: false
+        invert: false,
+	    resizeSlider: true
       };
     },
 
@@ -259,13 +262,17 @@
     },
 
     componentDidMount: function () {
-      window.addEventListener('resize', this._handleResize);
-      this._handleResize();
+      if (this.props.resizeSlider) {
+      	window.addEventListener('resize', this._handleResize);
+	    this._handleResize();
+      }
     },
 
     componentWillUnmount: function () {
       this._clearPendingResizeTimeouts();
-      window.removeEventListener('resize', this._handleResize);
+	  if (this.props.resizeSlider) {
+	    window.removeEventListener('resize', this._handleResize);
+	  }
     },
 
     getValue: function () {
