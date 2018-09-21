@@ -169,7 +169,7 @@
        *  Receives the value at the clicked position as argument.
        */
       onSliderClick: PropTypes.func,
-	    
+
 	  resizeSlider: PropTypes.bool,
     },
 
@@ -196,10 +196,6 @@
 
     getInitialState: function () {
       var value = this._or(ensureArray(this.props.value), ensureArray(this.props.defaultValue));
-
-      // reused throughout the component to store results of iterations over `value`
-      this.tempArray = value.slice();
-
       // array for storing resize timeouts ids
       this.pendingResizeTimeouts = [];
 
@@ -222,9 +218,6 @@
     // This basically allows the slider to be a controlled component.
     componentWillReceiveProps: function (newProps) {
       var value = this._or(ensureArray(newProps.value), this.state.value);
-
-      // ensure the array keeps the same size as `value`
-      this.tempArray = value.slice();
 
       for (var i = 0; i < value.length; i++) {
         this.state.value[i] = this._trimAlignValue(value[i], newProps);
@@ -760,12 +753,12 @@
     _renderHandles: function (offset) {
       var length = offset.length;
 
-      var styles = this.tempArray;
+      var styles = [];
       for (var i = 0; i < length; i++) {
         styles[i] = this._buildHandleStyle(offset[i], i);
       }
 
-      var res = this.tempArray;
+      var res = [];
       var renderHandle = this._renderHandle;
       if (React.Children.count(this.props.children) > 0) {
         React.Children.forEach(this.props.children, function (child, i) {
@@ -840,7 +833,7 @@
       var state = this.state;
       var props = this.props;
 
-      var offset = this.tempArray;
+      var offset = [];
       var value = state.value;
       var l = value.length;
       for (var i = 0; i < l; i++) {
