@@ -452,7 +452,7 @@
         this.isScrolling = undefined; // don't know yet if the user is trying to scroll
         this._start(i, position[0]);
         this._addHandlers(this._getTouchEventMap());
-        stopPropagation(e);
+	    pauseEvent(e);
       }.bind(this);
     },
 
