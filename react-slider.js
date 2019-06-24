@@ -447,12 +447,28 @@
     _createOnTouchStart: function (i) {
       return function (e) {
         if (this.props.disabled || e.touches.length > 1) return;
+        var diffX = 0;
+        var diffY = 0;
         var position = this._getTouchPosition(e);
-        this.startPosition = position;
+        this.startPosition = position.splice(0);
         this.isScrolling = undefined; // don't know yet if the user is trying to scroll
-        this._start(i, position[0]);
+        if (i === -1) {
+          var handleRef = this.refs.handle0;
+          var rectH = handleRef.getBoundingClientRect();
+          diffX = rectH.left - this.startPosition[0] + rectH.width / 2;
+          diffY = rectH.top - this.startPosition[1] + rectH.height / 2;
+        }
+        position[0] += diffX;
+        position[1] += diffY;
+        this._start(i === -1 ? 0: i, position[0]);
         this._addHandlers(this._getTouchEventMap());
-	    pauseEvent(e);
+
+        this._forceValueFromPosition(this.startPosition[0], function (i) {
+          this._fireChangeEvent('onChange');
+          this._start(i, this.startPosition[0]);
+          this._addHandlers(this._getTouchEventMap());
+        }.bind(this));
+        stopPropagation(e);
       }.bind(this);
     },
 
@@ -849,7 +865,8 @@
             style: {position: 'relative'},
             className: props.className + (props.disabled ? ' disabled' : ''),
             onMouseDown: this._onSliderMouseDown,
-            onClick: this._onSliderClick
+            onClick: this._onSliderClick,
+            onTouchStart: this._createOnTouchStart(-1),
           },
           bars,
           handles
