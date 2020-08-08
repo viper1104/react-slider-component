@@ -426,7 +426,7 @@
     _createOnKeyDown: function (i) {
       return function (e) {
         if (this.props.disabled) return;
-        this._start(i);
+        this._start(i, this.state.startPosition);
         this._addHandlers(this._getKeyDownEventMap());
         pauseEvent(e);
       }.bind(this);
@@ -450,7 +450,7 @@
         var diffX = 0;
         var diffY = 0;
         var position = this._getTouchPosition(e);
-        this.startPosition = position.splice(0);
+        this.startPosition = position.slice(0);
         this.isScrolling = undefined; // don't know yet if the user is trying to scroll
         if (i === -1) {
           var handleRef = this.refs.handle0;
