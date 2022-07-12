@@ -171,6 +171,8 @@
       onSliderClick: PropTypes.func,
 
 	  resizeSlider: PropTypes.bool,
+
+      customCalculateHandleStyle: PropTypes.func,
     },
 
     getDefaultProps: function () {
@@ -190,7 +192,8 @@
         disabled: false,
         snapDragDisabled: false,
         invert: false,
-	    resizeSlider: true
+	    resizeSlider: true,
+	    customCalculateHandleStyle: null,
       };
     },
 
@@ -330,6 +333,10 @@
         zIndex: this.state.zIndices.indexOf(i) + 1
       };
       style[this._posMinKey()] = offset + 'px';
+      const {customCalculateHandleStyle} = this.props;
+      if(typeof customCalculateHandleStyle === 'function') {
+        return customCalculateHandleStyle(style);
+      }
       return style;
     },
 
