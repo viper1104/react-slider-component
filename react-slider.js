@@ -44,7 +44,7 @@
 
   // undoEnsureArray(ensureArray(x)) === x
 
-  return createReactClass({
+  var ReactSlider = createReactClass({
     displayName: 'ReactSlider',
 
     propTypes: {
@@ -170,12 +170,7 @@
        */
       onSliderClick: PropTypes.func,
 
-      resizeSlider: PropTypes.bool,
-
-      customCalculateHandleStyle: PropTypes.func,
-      customCalcOffset: PropTypes.func,
-      customCalcValue: PropTypes.func,
-      useCalculateValueFromPositionWithAbsolutPosition: PropTypes.bool,
+	  resizeSlider: PropTypes.bool,
     },
 
     getDefaultProps: function () {
@@ -195,11 +190,7 @@
         disabled: false,
         snapDragDisabled: false,
         invert: false,
-        resizeSlider: true,
-        customCalculateHandleStyle: null,
-        customCalcOffset: null,
-        customCalcValue: null,
-        useCalculateValueFromPositionWithAbsolutPosition: false
+	    resizeSlider: true
       };
     },
 
@@ -323,28 +314,13 @@
         return 0;
       }
       var ratio = (value - this.props.min) / range;
-      const offset = ratio * this.state.upperBound;
-
-      const {customCalcOffset} = this.props;
-      if (typeof customCalcOffset === 'function') {
-        return customCalcOffset(value, this.props, this.state.upperBound, offset);
-      }
-
-      return offset;
+      return ratio * this.state.upperBound;
     },
 
     // calculates the value corresponding to a given pixel offset, i.e. the inverse of `_calcOffset`.
     _calcValue: function (offset) {
       var ratio = offset / this.state.upperBound;
-      const {customCalcValue} = this.props;
-      const value = ratio * (this.props.max - this.props.min) + this.props.min;
-
-      if (typeof customCalcValue === 'function') {
-        return customCalcValue(offset, this.props, this.state.upperBound, value);
-      }
-
-
-      return value;
+      return ratio * (this.props.max - this.props.min) + this.props.min;
     },
 
     _buildHandleStyle: function (offset, i) {
@@ -354,10 +330,6 @@
         zIndex: this.state.zIndices.indexOf(i) + 1
       };
       style[this._posMinKey()] = offset + 'px';
-      const {customCalculateHandleStyle} = this.props;
-      if (typeof customCalculateHandleStyle === 'function') {
-        return customCalculateHandleStyle(style);
-      }
       return style;
     },
 
@@ -556,7 +528,7 @@
     _onMouseMove: function (e) {
       var position = this._getMousePosition(e);
       var diffPosition = this._getDiffPosition(position[0]);
-      var newValue = this.props.useCalculateValueFromPositionWithAbsolutPosition ? this._getValueFromPositionAbsolut(position[0]) : this._getValueFromPosition(diffPosition);
+      var newValue = this._getValueFromPosition(diffPosition);
       this._move(newValue);
     },
 
@@ -579,7 +551,8 @@
       pauseEvent(e);
 
       var diffPosition = this._getDiffPosition(position[0]);
-      var newValue = this.props.useCalculateValueFromPositionWithAbsolutPosition ? this._getValueFromPositionAbsolut(position[0]) : this._getValueFromPosition(diffPosition);
+      var newValue = this._getValueFromPosition(diffPosition);
+
       this._move(newValue);
     },
 
@@ -616,11 +589,6 @@
     _getValueFromPosition: function (position) {
       var diffValue = position / (this.state.sliderLength - this.state.handleSize) * (this.props.max - this.props.min);
       return this._trimAlignValue(this.state.startValue + diffValue);
-    },
-
-    _getValueFromPositionAbsolut(position) {
-      var pixelOffset = this._calcOffsetFromPosition(position);
-      return this._trimAlignValue(this._calcValue(pixelOffset));
     },
 
     _getDiffPosition: function (position) {
@@ -906,4 +874,6 @@
       );
     }
   });
+
+  return ReactSlider;
 }));
