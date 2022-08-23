@@ -150,17 +150,23 @@
       invert: PropTypes.bool,
 
       /**
-       * Callback called before starting to move a handle.
+       * Callback called before starting to move a thumb. The callback will only be called if the
+       * action will result in a change. The function will be called with two arguments, the first
+       * being the initial value(s) the second being thumb index.
        */
       onBeforeChange: PropTypes.func,
 
       /**
        * Callback called on every value change.
+       * The function will be called with two arguments, the first being the new value(s)
+       * the second being thumb index.
        */
       onChange: PropTypes.func,
 
       /**
-       * Callback called only after moving a handle has ended.
+       * Callback called only after moving a thumb has ended. The callback will only be called if
+       * the action resulted in a change. The function will be called with two arguments, the
+       * first being the result value(s) the second being thumb index.
        */
       onAfterChange: PropTypes.func,
 
@@ -848,7 +854,7 @@
 
     _fireChangeEvent: function (event) {
       if (this.props[event]) {
-        this.props[event](undoEnsureArray(this.state.value));
+        this.props[event](undoEnsureArray(this.state.value), this.state.index);
       }
     },
 
