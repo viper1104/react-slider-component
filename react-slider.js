@@ -173,6 +173,8 @@
 	  resizeSlider: PropTypes.bool,
 
       customCalculateHandleStyle: PropTypes.func,
+
+      handleSizeChangeCallback: PropTypes.func,
     },
 
     getDefaultProps: function () {
@@ -194,6 +196,7 @@
         invert: false,
 	    resizeSlider: true,
 	    customCalculateHandleStyle: null,
+        handleSizeChangeCallback: null,
       };
     },
 
@@ -261,6 +264,15 @@
       if (this.props.resizeSlider) {
       	window.addEventListener('resize', this._handleResize);
 	    this._handleResize();
+      }
+    },
+
+    componentDidUpdate: function (prevProps, prevState) {
+      if (prevState.handleSize !== this.state.handleSize) {
+        const {handleSizeChangeCallback} = this.props;
+        if (typeof handleSizeChangeCallback === 'function') {
+          handleSizeChangeCallback(this.state.handleSize);
+        }
       }
     },
 
