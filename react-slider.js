@@ -457,7 +457,7 @@
     // create the `touchstart` handler for the i-th handle
     _createOnTouchStart: function (i) {
       return function (e) {
-        if (this.props.disabled || e.touches.length > 1) return;
+        if (this.props.disabled || e.touches.length > 1 || this.props.snapDragDisabled) return;
         var diffX = 0;
         var diffY = 0;
         var position = this._getTouchPosition(e);
